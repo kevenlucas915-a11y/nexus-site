@@ -535,6 +535,10 @@ export default function BeamWordmarkFooter({
 
       <div className="bwf-inner">
         <div className="bwf-col">
+          <div className="flex items-center gap-2 mb-2.5" style={delay()}>
+            <img src="/nexus-symbol.png" alt="Nexus Digital" className="w-5 h-5 object-contain filter drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]" />
+            <span className="text-white font-bold tracking-tight text-sm font-sans">NEXUS DIGITAL</span>
+          </div>
           <p className="bwf-label" style={delay()}>
             © {year} {label}
           </p>

@@ -31,15 +31,19 @@ export default function Navbar({ onOpenContact }) {
     }`}>
       <div className="max-w-7xl mx-auto px-6 sm:px-8 flex items-center justify-between">
         {/* Brand Logo */}
-        <a href="#" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-white/10 border border-white/20 text-white flex items-center justify-center font-display font-bold text-sm tracking-wider group-hover:scale-105 transition-transform">
-            N
+        <a href="#" className="flex items-center gap-3 group">
+          <div className="relative flex items-center justify-center w-9 h-9 rounded-xl bg-white/[0.07] border border-white/15 group-hover:border-white/30 transition-all p-1.5 shadow-lg shadow-black/30 group-hover:shadow-white/10">
+            <img 
+              src="/nexus-symbol.png" 
+              alt="Nexus Digital Logo" 
+              className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(255,255,255,0.35)] transition-transform group-hover:scale-110" 
+            />
           </div>
           <div className="flex flex-col">
-            <span className="font-display font-bold text-lg tracking-tight text-white leading-none">
+            <span className="font-display font-bold text-lg tracking-tight text-white leading-none group-hover:text-white transition-colors">
               {AGENCY_CONFIG.name}
             </span>
-            <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-medium">
+            <span className="text-[10px] uppercase tracking-widest text-zinc-400 font-medium mt-0.5">
               Hub de Soluções
             </span>
           </div>

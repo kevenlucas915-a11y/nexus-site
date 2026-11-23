@@ -152,6 +152,7 @@ export default function HeroSection({ onExploreEcosystem, onViewProjects }: { on
             {/* Badge */}
             <div className="animate-fade-in delay-100">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur-md transition-colors hover:bg-white/10">
+                <img src="/nexus-symbol.png" alt="Nexus" className="w-3.5 h-3.5 object-contain filter drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]" />
                 <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-zinc-300 flex items-center gap-2">
                   Nexus Digital • Hub de Soluções
                   <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
