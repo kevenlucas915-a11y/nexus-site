@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Send, CheckCircle2, MessageCircle, Mail, Phone } from 'lucide-react';
+import { X, Send, CheckCircle2, MessageCircle, Mail, Phone, ExternalLink } from 'lucide-react';
 import { AGENCY_CONFIG } from '../data/content';
 
 export default function ContactModal({ isOpen, onClose, prefilledService = '' }) {
@@ -12,6 +12,7 @@ export default function ContactModal({ isOpen, onClose, prefilledService = '' })
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [generatedUrl, setGeneratedUrl] = useState('');
 
   useEffect(() => {
     if (prefilledService) {
@@ -19,23 +20,44 @@ export default function ContactModal({ isOpen, onClose, prefilledService = '' })
     }
   }, [prefilledService, isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      setSubmitted(false);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitted(true);
     
-    // Also build a quick WhatsApp link redirection option
-    const text = `Olá time Nexus! Me chamo ${formData.name} (${formData.company || 'Marca'}).%0A%0A` +
-      `• Instagram: ${formData.instagram || 'Não informado'}%0A` +
-      `• Serviço de interesse: ${formData.service}%0A` +
-      `• WhatsApp para contato: ${formData.whatsapp}%0A` +
-      (formData.message ? `• Mensagem: ${formData.message}%0A%0A` : '%0A') +
-      `Gostaria de agendar uma conversa para receber uma proposta.`;
+    // Constrói a mensagem limpa e formata com quebras de linha reais
+    const messageLines = [
+      `*Solicitação de Diagnóstico — Nexus Digital*`,
+      ``,
+      `• *Nome:* ${formData.name}`,
+      `• *Empresa/Marca:* ${formData.company || 'Não informado'}`,
+      `• *WhatsApp:* ${formData.whatsapp}`,
+      `• *Instagram:* ${formData.instagram || 'Não informado'}`,
+      `• *Serviço de interesse:* ${formData.service}`,
+      formData.message ? `• *Desafio / Mensagem:* ${formData.message}` : null,
+      ``,
+      `Olá time Nexus! Gostaria de agendar uma conversa para receber uma proposta.`
+    ].filter(Boolean).join('\n');
 
-    setTimeout(() => {
-      window.open(`https://wa.me/${AGENCY_CONFIG.phone}?text=${text}`, '_blank');
-    }, 1200);
+    // Codifica toda a mensagem para URL segura sem falhar em acentos ou caracteres especiais
+    const encoded = encodeURIComponent(messageLines);
+    const whatsappUrl = `https://wa.me/${AGENCY_CONFIG.phone}?text=${encoded}`;
+    
+    setGeneratedUrl(whatsappUrl);
+    setSubmitted(true);
+
+    // Abre diretamente na ação do usuário para evitar bloqueio de popup pelo navegador
+    try {
+      window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      console.warn('Bloqueador de popup interceptou abertura automática:', err);
+    }
   };
 
   return (
@@ -46,29 +68,62 @@ export default function ContactModal({ isOpen, onClose, prefilledService = '' })
       >
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition-colors"
+          className="absolute top-5 right-5 w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 flex items-center justify-center transition-colors cursor-pointer"
           aria-label="Fechar"
         >
           <X className="w-5 h-5" />
         </button>
 
         {submitted ? (
-          <div className="text-center py-10 space-y-4">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+          <div className="text-center py-6 sm:py-8 space-y-5">
+            <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-md">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h3 className="font-display text-2xl font-bold text-stone-900">
-              Solicitação Enviada com Sucesso!
-            </h3>
-            <p className="text-sm text-stone-600 max-w-md mx-auto">
-              Estamos te redirecionando para o WhatsApp do nosso time para agilizar seu atendimento. Em breve retornaremos!
+            
+            <div className="space-y-2">
+              <h3 className="font-display text-2xl font-bold text-stone-900">
+                Diagnóstico Pronto para Envio!
+              </h3>
+              <p className="text-sm text-stone-600 max-w-md mx-auto leading-relaxed">
+                As informações da sua marca foram preparadas. Clique no botão abaixo para abrir a conversa no WhatsApp oficial da Nexus.
+              </p>
+            </div>
+
+            {/* Botão de Ação Direta para o WhatsApp (100% à prova de bloqueador de pop-ups) */}
+            <div className="pt-2">
+              <a
+                href={generatedUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2.5 w-full py-4 px-6 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-stone-950 font-bold text-sm tracking-wide shadow-xl shadow-emerald-500/25 transition-all duration-300 hover:scale-[1.02] active:scale-95"
+              >
+                <MessageCircle className="w-5 h-5 fill-current" />
+                <span>Abrir WhatsApp e Enviar Mensagem</span>
+                <ExternalLink className="w-4 h-4 opacity-75" />
+              </a>
+            </div>
+
+            <p className="text-xs text-stone-400 max-w-sm mx-auto">
+              Se a conversa não abriu automaticamente no seu aparelho, o botão verde acima abre o WhatsApp com todas as suas respostas preenchidas.
             </p>
-            <button
-              onClick={onClose}
-              className="mt-6 px-6 py-2.5 rounded-xl bg-stone-900 text-white text-xs font-bold uppercase tracking-wider"
-            >
-              Fechar Janela
-            </button>
+
+            <div className="pt-4 border-t border-stone-100 flex items-center justify-center gap-4">
+              <button
+                type="button"
+                onClick={() => setSubmitted(false)}
+                className="text-xs font-semibold text-stone-500 hover:text-stone-800 transition-colors"
+              >
+                Editar informações
+              </button>
+              <span className="text-stone-300">•</span>
+              <button
+                type="button"
+                onClick={onClose}
+                className="text-xs font-semibold text-stone-700 hover:text-stone-950 transition-colors"
+              >
+                Fechar janela
+              </button>
+            </div>
           </div>
         ) : (
           <div>

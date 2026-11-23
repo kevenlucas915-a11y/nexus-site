@@ -197,13 +197,17 @@ export default function BudgetCalculator() {
     let text = '';
 
     if (calculatorType === 'monthly') {
-      text = `Olá time Nexus! Fiz uma simulação no site com base nos planos oficiais:%0A%0A` +
-        `• Plano Selecionado: Plano ${currentMonthlyPlan.number} — ${currentMonthlyPlan.name}%0A` +
-        `• Investimento Oficial: ${currentMonthlyPlan.price}/mês%0A` +
-        `• Período: Fidelidade mínima de 6 meses%0A` +
-        `• Recursos Inclusos:%0A` +
-        currentMonthlyPlan.features.map(f => `  - ${f}`).join('%0A') + `%0A%0A` +
-        `Gostaria de agendar uma conversa para fechar a contratação.`;
+      text = [
+        `Olá time Nexus! Fiz uma simulação no site com base nos planos oficiais:`,
+        ``,
+        `• *Plano Selecionado:* Plano ${currentMonthlyPlan.number} — ${currentMonthlyPlan.name}`,
+        `• *Investimento Oficial:* ${currentMonthlyPlan.price}/mês`,
+        `• *Período:* Fidelidade mínima de 6 meses`,
+        `• *Recursos Inclusos:*`,
+        ...currentMonthlyPlan.features.map(f => `  - ${f}`),
+        ``,
+        `Gostaria de agendar uma conversa para fechar a contratação.`
+      ].join('\n');
     } else {
       const servicesList = [
         eventServices.foto && 'Fotografia',
@@ -212,16 +216,20 @@ export default function BudgetCalculator() {
         eventServices.story && 'Story Maker'
       ].filter(Boolean).join(' + ');
 
-      text = `Olá time Nexus! Montei uma simulação de cobertura de evento no site:%0A%0A` +
-        `• Formato: ${eventCalculation.title}%0A` +
-        `• Serviços Inclusos: ${servicesList}%0A` +
-        `• Duração: Até 4 horas de evento%0A` +
-        `• Investimento Oficial: ${eventCalculation.price}` + 
-        (eventCalculation.savings ? ` (${eventCalculation.savings})` : '') + `%0A%0A` +
-        `Gostaria de consultar disponibilidade de data na agenda da Nexus.`;
+      text = [
+        `Olá time Nexus! Montei uma simulação de cobertura de evento no site:`,
+        ``,
+        `• *Formato:* ${eventCalculation.title}`,
+        `• *Serviços Inclusos:* ${servicesList}`,
+        `• *Duração:* Até 4 horas de evento`,
+        `• *Investimento Oficial:* ${eventCalculation.price}${eventCalculation.savings ? ` (${eventCalculation.savings})` : ''}`,
+        ``,
+        `Gostaria de consultar disponibilidade de data na agenda da Nexus.`
+      ].join('\n');
     }
 
-    window.open(`https://wa.me/${AGENCY_CONFIG.phone}?text=${text}`, '_blank');
+    const encoded = encodeURIComponent(text);
+    window.open(`https://wa.me/${AGENCY_CONFIG.phone}?text=${encoded}`, '_blank', 'noopener,noreferrer');
   };
 
   return (
